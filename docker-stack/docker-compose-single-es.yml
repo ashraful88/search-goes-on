@@ -1,0 +1,41 @@
+version: '2.2'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.1.1
+    container_name: elasticsearch
+    environment:
+      - http.host=0.0.0.0
+      - transport.host=127.0.0.1
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./config/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/elasticsearch.yml
+      - elasticdata:/usr/share/elasticsearch/data
+    ports: ['9200:9200']
+    healthcheck:
+      test: ["CMD", "curl","-s" ,"-f", "http://localhost:9200/_cat/health"]
+    networks:
+      - elasticnet
+  
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.1.1
+    environment:
+      SERVER_NAME: kibana.example.org
+      ELASTICSEARCH_HOSTS: http://es01:9200
+    networks:
+      - elasticnet
+    depends_on: ['es01']
+    ports:
+      - 5601:5601
+
+volumes:
+  elasticdata:
+    driver: local
+
+
+networks:
+  elasticnet:
