@@ -18,6 +18,6 @@ func TestgetDocByID(t *testing.T) {
 
 	assert.Equal(t, 201, statusRes)
 	if assert.NotNil(t, bodyRes) {
-		require.NoError(t, errors.New("Database name missing"))
+		require.NoError(t, errors.New("Query "))
 	}
 }

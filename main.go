@@ -3,22 +3,35 @@ package main
 import (
 	"log"
 	"strings"
-	"search-goes/api"
-
+	"github.com/ashraful88/search-goes/api"
+	"github.com/gin-gonic/gin"
 	gpmiddleware "github.com/701search/gin-prometheus-middleware"
 	elasticsearch "github.com/elastic/go-elasticsearch/v7"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	log.SetFlags(0)
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	srvPort, hasPort := os.LookupEnv("SERVICE_PORT")
+	if hasPort == false {
+		log.Fatal("Service port missing")
+	}
+
+	esAddr, hasESInfo := os.LookupEnv("ES_ADDRESS")
+	if hasESInfo == false {
+		log.Fatal("Elasticsearch address missing")
+	}
 
 	/* var (
 		r  map[string]interface{}
-		wg sync.WaitGroup
 	) */
 	cfg := elasticsearch.Config{
 		Addresses: []string{
-			"http://localhost:9200",
+			esAddr,
 		},
 	}
 	es, _ := elasticsearch.NewClient(cfg)
@@ -33,7 +46,7 @@ func main() {
 		log.Fatalf("Error: %s", res.String())
 	}
 
-
+	router := gin.New()
 	// Global middleware
 	// Logger middleware will write the logs to gin.DefaultWriter even if you set with GIN_MODE=release.
 	// By default gin.DefaultWriter = os.Stdout
@@ -56,9 +69,8 @@ func main() {
 
 	v1 := router.Group("/v1")
 	api.MountRoute(v1)
-	/* wg.Add(1)
-	wg.Done()
-	wg.Wait() */
 
+	log.Println("Listening ",srvPort)
+	router.Run(":" + srvPort)
 }
 

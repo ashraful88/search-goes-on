@@ -1,5 +1,5 @@
 package search
 
-func getDocByID() {
+func queryForDocByID() {
 
 }
