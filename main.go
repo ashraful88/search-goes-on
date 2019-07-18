@@ -2,11 +2,12 @@ package main
 
 import (
 	"log"
-	"strings"
-	"github.com/ashraful88/search-goes/api"
-	"github.com/gin-gonic/gin"
+	"os"
+
 	gpmiddleware "github.com/701search/gin-prometheus-middleware"
+	"github.com/ashraful88/search-goes/api"
 	elasticsearch "github.com/elastic/go-elasticsearch/v7"
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
@@ -70,7 +71,6 @@ func main() {
 	v1 := router.Group("/v1")
 	api.MountRoute(v1)
 
-	log.Println("Listening ",srvPort)
+	log.Println("Listening ", srvPort)
 	router.Run(":" + srvPort)
 }
-

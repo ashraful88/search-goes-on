@@ -20,7 +20,7 @@ type StructuredLog struct {
 	Event        string      `json:"event,omitempty"`
 	Message      string      `json:"message,omitempty"`
 	Account      string      `json:"account,omitempty"`
-	ID         	 string      `json:"id,omitempty"`
+	ID           string      `json:"id,omitempty"`
 	Raw          string      `json:"raw,omitempty"`
 	RawInterface interface{} `json:"rawInterface,omitempty"`
 }
@@ -43,15 +43,15 @@ func LogEvent(thelog StructuredLog, level, event, msg string) {
 
 // LogNew is to log with a new StructuredLog struct
 func LogNew(level, event, msg string) {
-	var SSlog SavedSearchLog
-	SSlog.Timestamp = time.Now().Format(time.RFC3339)
+	var thelog StructuredLog
+	thelog.Timestamp = time.Now().Format(time.RFC3339)
 	hostname, _ := os.Hostname()
-	SSlog.Server = hostname
-	SSlog.Level = level
-	SSlog.Event = event
-	SSlog.Message = msg
-	SSlog.Service = "search-api"
-	logJSON, err := json.Marshal(SSlog)
+	thelog.Server = hostname
+	thelog.Level = level
+	thelog.Event = event
+	thelog.Message = msg
+	thelog.Service = "search-api"
+	logJSON, err := json.Marshal(thelog)
 	if err != nil {
 		log.Println("Structured logger: Logger JSON Marshal failed !")
 	}

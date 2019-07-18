@@ -9,6 +9,4 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/prometheus/client_golang v1.0.0 // indirect
 	github.com/stretchr/testify v1.3.0
-	github.com/ashraful88/search-goes/api
-	github.com/ashraful88/search-goes/search
 )
