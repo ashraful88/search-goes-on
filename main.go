@@ -6,7 +6,7 @@ import (
 
 	gpmiddleware "github.com/701search/gin-prometheus-middleware"
 	"github.com/ashraful88/search-goes/api"
-	elasticsearch "github.com/elastic/go-elasticsearch/v7"
+	"github.com/ashraful88/search-goes/search"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -26,26 +26,11 @@ func main() {
 	if hasESInfo == false {
 		log.Fatal("Elasticsearch address missing")
 	}
+	_ = search.OpenElasticSearchConnection(esAddr)
 
 	/* var (
 		r  map[string]interface{}
 	) */
-	cfg := elasticsearch.Config{
-		Addresses: []string{
-			esAddr,
-		},
-	}
-	es, _ := elasticsearch.NewClient(cfg)
-	log.Println(elasticsearch.Version)
-
-	res, err := es.Info()
-	if err != nil {
-		log.Fatalf("Error getting response: %s", err)
-	}
-	// Check response status
-	if res.IsError() {
-		log.Fatalf("Error: %s", res.String())
-	}
 
 	router := gin.New()
 	// Global middleware
