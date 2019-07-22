@@ -19,9 +19,10 @@ func OpenElasticSearchConnection(esAddr string) *elasticsearch.Client {
 			esAddr,
 		},
 	}
-	es, _ := elasticsearch.NewClient(cfg)
-	log.Println(elasticsearch.Version)
-
+	es, err := elasticsearch.NewClient(cfg)
+	if err != nil {
+		log.Fatalf("Error creating the client: %s", err)
+	}
 	res, err := es.Info()
 	if err != nil {
 		log.Fatalf("Error getting response: %s", err)

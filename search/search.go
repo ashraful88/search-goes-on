@@ -11,8 +11,8 @@ func QueryES(category, region string) interface{} {
 	es := GetEsClient()
 	//byt := []byte(`{"num":6.13,"strs":["a","b"]}`)
 	// Perform the search request.
-	log.Println(category)
-	log.Println(region)
+	log.Println(category, "category")
+	log.Println(region, "region")
 	res, err := es.Search(
 		es.Search.WithContext(context.Background()),
 		es.Search.WithIndex("mudahad"),
