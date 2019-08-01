@@ -8,11 +8,19 @@ import (
 	"github.com/elastic/go-elasticsearch/v7"
 )
 
-// ElasticSearchClient open client for elasticsearch
-var ElasticSearchClient *elasticsearch.Client
+// EngineClient instance of search engine
+var EngineClient EngineConfig
+
+//EngineConfig client, name/alias of elsticsearch index in our cluster
+type EngineConfig struct {
+	Client            *elasticsearch.Client
+	AdsIndexName      string
+	CategoryIndexName string
+	RegionIndexName   string
+}
 
 // OpenElasticSearchConnection create new ES client
-func OpenElasticSearchConnection(esAddr string) *elasticsearch.Client {
+func OpenElasticSearchConnection(esAddr, ads, cat, region string) *EngineConfig {
 	var r map[string]interface{}
 	cfg := elasticsearch.Config{
 		Addresses: []string{
@@ -40,12 +48,15 @@ func OpenElasticSearchConnection(esAddr string) *elasticsearch.Client {
 	log.Printf("Server: %s", r["version"].(map[string]interface{})["number"])
 	log.Println(strings.Repeat("~", 37))
 
-	ElasticSearchClient = es
+	EngineClient.Client = es
+	EngineClient.AdsIndexName = ads
+	EngineClient.CategoryIndexName = cat
+	EngineClient.RegionIndexName = region
 
-	return es
+	return &EngineClient
 }
 
-// GetEsClient get elasticsearch client
-func GetEsClient() *elasticsearch.Client {
-	return ElasticSearchClient
+// GetSearchClient get search engine instance
+func GetSearchClient() *EngineConfig {
+	return &EngineClient
 }

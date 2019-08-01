@@ -1,28 +1,32 @@
-FROM golang:1.12-alpine as builder
+FROM golang:1.12-alpine3.10 AS goesbuilder
 
-# Set the Current Working Directory inside the container
-WORKDIR /search-goes
+RUN apk add --no-cache curl git
+RUN mkdir -p /etc/secret/
+COPY  .env /etc/secret/.env
 
-# Copy everything from the current directory to the PWD(Present Working Directory) inside the container
+WORKDIR /usr/local/goes
 COPY . .
 
-# Download dependencies
-RUN go get -d -v ./...
+ENV TZ Asia/Kuala_Lumpur
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Build the Go app
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /go/bin/go-file .
+RUN curl https://glide.sh/get | sh
+RUN glide install
+RUN cd api && CGO_ENABLED=0 go build -a -o goapp
 
 
-######## Start a new stage from scratch #######
-FROM alpine:latest  
+# Final stage
+FROM alpine:3.10
 
+RUN mkdir -p /etc/secret/
+COPY  .env /etc/secret/.env
+
+ENV TZ Asia/Kuala_Lumpur
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apk --no-cache add ca-certificates
 
-WORKDIR /root/
-
-# Copy the Pre-built binary file from the previous stage
-COPY --from=builder /go/bin/go-file .
-
-EXPOSE 8088
-
-CMD ["./go-file"] 
+WORKDIR /usr/local/goes
+COPY . .
+COPY --from=goesbuilder /usr/local/goes/goapp /usr/local/goes/
+RUN chmod +x /usr/local/goes/goapp
+ENTRYPOINT ["./goapp"]

@@ -1,3 +1,4 @@
 package api
 
-var ServiceName string = "SearchAPI"
+// ServiceName name of service
+var ServiceName = "SearchAPI"

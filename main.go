@@ -18,20 +18,20 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	search.FilterFilePath = "./search/config"
 	srvPort, hasPort := os.LookupEnv("SERVICE_PORT")
 	if hasPort == false {
 		log.Fatal("Service port missing")
 	}
 
+	adIndex, _ := os.LookupEnv("AD_INDEX")
+	catIndex, _ := os.LookupEnv("CATEGORY_INDEX")
+	regionIndex, _ := os.LookupEnv("REGION_INDEX")
 	esAddr, hasESInfo := os.LookupEnv("ES_ADDRESS")
 	if hasESInfo == false {
 		log.Fatal("Elasticsearch address missing")
 	}
-	_ = search.OpenElasticSearchConnection(esAddr)
-
-	/* var (
-		r  map[string]interface{}
-	) */
+	_ = search.OpenElasticSearchConnection(esAddr, adIndex, catIndex, regionIndex)
 
 	router := gin.New()
 	// Global middleware
