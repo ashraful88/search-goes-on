@@ -19,7 +19,7 @@ func handleGetFilters(c *gin.Context) (int, interface{}) {
 
 }
 
-func handleSearchAds(c *gin.Context) (int, interface{}) {
+func handleSearchAds(c *gin.Context) (int, string) {
 	var logData StructuredLog
 
 	/*area := c.Query("area")
@@ -32,10 +32,11 @@ func handleSearchAds(c *gin.Context) (int, interface{}) {
 	category := c.Query("category")
 	region := c.Query("region")
 	area := c.Query("area")
+
 	//region := c.Request.URL.Query().Get("region")
 	qry := c.Request.URL.Query()
 
-	log.Println(category, "category")
+	log.Println(c.Request.URL.Query(), "category")
 	log.Println(region, "region")
 	log.Println(area, "area")
 	log.Println(offsetStr, "off")

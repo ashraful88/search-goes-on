@@ -22,7 +22,7 @@ func healthCheck(c *gin.Context) {
 }
 
 func adSearch(c *gin.Context) {
-	c.JSON(handleSearchAds(c))
+	c.String(handleSearchAds(c))
 }
 
 func searchFilters(c *gin.Context) {
