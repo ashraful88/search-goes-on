@@ -1,8 +1,17 @@
-params.1015.equip: 3
-params.1015.equip: 3
-params.1015.equip: 3
-params.1015.equip: 3
-params.1015.equip: 3
-params.1015.equip: 3
-params.1015.equip: 3
-params.1015.equip: 3
+# filter context
+filters: 
+  region:
+    label: "Region"
+    type: string
+    request: multi
+  city:
+    label: "City"
+    type: string
+    request: multi
+  price:
+    label: "Price"
+    type: float
+    request: range
+
+# query context
+query:
