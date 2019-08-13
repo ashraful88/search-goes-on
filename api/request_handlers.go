@@ -3,41 +3,38 @@ package api
 import (
 	"log"
 	"net/http"
-	"strconv"
 
+	"github.com/ashraful88/search-goes/search"
 	"github.com/gin-gonic/gin"
 )
 
-func handleRead(c *gin.Context) (int, interface{}) {
-	var logData StructuredLog
+var contentType = "application/json; charset=utf-8"
 
-	//category := c.Query("category")
-	//region := c.Query("region")
-	//area := c.Query("area")
-	offsetStr := c.Query("offset")
-	limitStr := c.Query("limit")
-	//sortBy := c.Query("sort")
-	//searchText := c.Query("q")
+func handleGetSearchParams(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "pass"})
+}
+
+func handleSearch(c *gin.Context) {
+	var logData StructuredLog
 	logData.ID = ""
 	logData.Account = ""
-	if offsetStr != "" {
-		offset, errOff := strconv.ParseInt(offsetStr, 10, 64)
-		if errOff != nil {
-			LogEvent(logData, "error", "OffsetError", errOff.Error())
-			//return JsonapiErrorResp(http.StatusNotAcceptable, "Request offset not compatible")
-			offset = 0
-		}
-		log.Println(offset)
-	}
-	if limitStr != "" {
-		limit, errLim := strconv.ParseInt(limitStr, 10, 64)
-		if errLim != nil {
-			LogEvent(logData, "error", "LimitError", errLim.Error())
-			return JsonapiErrorResp(http.StatusNotAcceptable, "Request limit not compatible")
-		}
-		log.Println(limit)
+
+	q := c.Query("q")
+	qry := c.Request.URL.Query()
+	log.Println(qry, "qry")
+
+	logData.RawInterface = qry
+	LogEvent(logData, "info", "ReadRequestReceived", "Request received to search by params")
+
+	result, err := search.QuerySearch(q, qry)
+	body, _ := JsonapiSearchResultRaw(result)
+	if err != nil {
+		LogEvent(logData, "error", "querySearchError", err.Error())
+		// send response
+		c.JSON(JsonapiErrorResp(500, "Error something went wrong"))
+	} else {
+		// send response
+		c.Data(200, contentType, []byte(body))
 	}
 
-	LogEvent(logData, "info", "ReadRequestReceived", "Request received to search by params")
-	return 200, logData
 }

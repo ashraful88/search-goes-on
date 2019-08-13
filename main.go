@@ -6,46 +6,32 @@ import (
 
 	gpmiddleware "github.com/701search/gin-prometheus-middleware"
 	"github.com/ashraful88/search-goes/api"
-	elasticsearch "github.com/elastic/go-elasticsearch/v7"
+	"github.com/ashraful88/search-goes/search"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
+// poroposed name "Quantum API"
 func main() {
 	log.SetFlags(0)
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	search.FilterFilePath = "./search/config"
 	srvPort, hasPort := os.LookupEnv("SERVICE_PORT")
 	if hasPort == false {
 		log.Fatal("Service port missing")
 	}
 
+	adIndex, _ := os.LookupEnv("AD_INDEX")
+	catIndex, _ := os.LookupEnv("CATEGORY_INDEX")
+	regionIndex, _ := os.LookupEnv("REGION_INDEX")
 	esAddr, hasESInfo := os.LookupEnv("ES_ADDRESS")
 	if hasESInfo == false {
 		log.Fatal("Elasticsearch address missing")
 	}
-
-	/* var (
-		r  map[string]interface{}
-	) */
-	cfg := elasticsearch.Config{
-		Addresses: []string{
-			esAddr,
-		},
-	}
-	es, _ := elasticsearch.NewClient(cfg)
-	log.Println(elasticsearch.Version)
-
-	res, err := es.Info()
-	if err != nil {
-		log.Fatalf("Error getting response: %s", err)
-	}
-	// Check response status
-	if res.IsError() {
-		log.Fatalf("Error: %s", res.String())
-	}
+	_ = search.OpenElasticSearchConnection(esAddr, adIndex, catIndex, regionIndex)
 
 	router := gin.New()
 	// Global middleware

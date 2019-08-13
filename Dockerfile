@@ -1,28 +1,21 @@
-FROM golang:1.12-alpine as builder
+FROM golang:1.12-alpine3.10 AS gobuilder
 
-# Set the Current Working Directory inside the container
-WORKDIR /search-goes
+RUN apk add --no-cache curl git
 
-# Copy everything from the current directory to the PWD(Present Working Directory) inside the container
+WORKDIR /usr/local/goes
 COPY . .
 
-# Download dependencies
-RUN go get -d -v ./...
+RUN go mod vendor
+RUN go build
+RUN CGO_ENABLED=0 go build -a -o goapp
 
-# Build the Go app
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /go/bin/go-file .
-
-
-######## Start a new stage from scratch #######
-FROM alpine:latest  
+# Final stage
+FROM alpine:3.10
 
 RUN apk --no-cache add ca-certificates
-
-WORKDIR /root/
-
-# Copy the Pre-built binary file from the previous stage
-COPY --from=builder /go/bin/go-file .
-
-EXPOSE 8088
-
-CMD ["./go-file"] 
+WORKDIR /goes
+COPY . .
+COPY --from=gobuilder /usr/local/goes/goapp /goes/
+RUN chmod +x /goes/goapp
+WORKDIR /goes
+ENTRYPOINT ["./goapp"]

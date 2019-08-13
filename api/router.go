@@ -9,8 +9,9 @@ import (
 // MountRoute func will mount all rest routes
 func MountRoute(router *gin.RouterGroup) {
 	router.GET("/health", healthCheck)
-	router.GET("/search/:one/:two/:three", readSearchList)
-	
+	router.GET("/search", handleSearch)
+	router.GET("/filters", handleGetSearchParams)
+
 	router.OPTIONS("/*any", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "pass"})
 	})
@@ -18,8 +19,4 @@ func MountRoute(router *gin.RouterGroup) {
 
 func healthCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "pass"})
-}
-
-func readSearchList(c *gin.Context) {
-	c.JSON(handleRead(c))
 }
