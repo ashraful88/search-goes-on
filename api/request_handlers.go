@@ -2,64 +2,39 @@ package api
 
 import (
 	"log"
-	"strconv"
+	"net/http"
 
 	"github.com/ashraful88/search-goes/search"
 	"github.com/gin-gonic/gin"
 )
 
-func handleGetFilters(c *gin.Context) (int, interface{}) {
-	category := c.Query("category")
-	if category == "" {
-		search.GetSearchClient()
-		return 200, search.GetFiltersFromConfig()
-	}
+var contentType = "application/json; charset=utf-8"
 
-	return 200, search.GetFiltersFromConfig()
-
+func handleGetSearchParams(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "pass"})
 }
 
-func handleSearchAds(c *gin.Context) (int, string) {
+func handleSearch(c *gin.Context) {
 	var logData StructuredLog
-
-	/*area := c.Query("area")
-	searchText := c.Query("q")
-	sortBy := c.Query("sort") */
-	offsetStr := c.DefaultQuery("offset", "0")
-	limitStr := c.DefaultQuery("limit", "20")
-
-	q := c.Query("q")
-	category := c.Query("category")
-	region := c.Query("region")
-	area := c.Query("area")
-
-	//region := c.Request.URL.Query().Get("region")
-	qry := c.Request.URL.Query()
-
-	log.Println(c.Request.URL.Query(), "category")
-	log.Println(region, "region")
-	log.Println(area, "area")
-	log.Println(offsetStr, "off")
-	log.Println(qry, "qry")
-
 	logData.ID = ""
 	logData.Account = ""
 
-	offset, errOff := strconv.ParseInt(offsetStr, 10, 64)
-	if errOff != nil {
-		LogEvent(logData, "error", "OffsetError", errOff.Error())
-		offset = 0
-	}
-	log.Println(offset)
+	q := c.Query("q")
+	qry := c.Request.URL.Query()
+	log.Println(qry, "qry")
 
-	limit, errLim := strconv.ParseInt(limitStr, 10, 64)
-	if errLim != nil {
-		LogEvent(logData, "error", "LimitError", errLim.Error())
-		limit = 20
-	}
-	log.Println(limit)
-
+	logData.RawInterface = qry
 	LogEvent(logData, "info", "ReadRequestReceived", "Request received to search by params")
-	result := search.QuerySearch(q, category, region)
-	return 200, result
+
+	result, err := search.QuerySearch(q, qry)
+	body, _ := JsonapiSearchResultRaw(result)
+	if err != nil {
+		LogEvent(logData, "error", "querySearchError", err.Error())
+		// send response
+		c.JSON(JsonapiErrorResp(500, "Error something went wrong"))
+	} else {
+		// send response
+		c.Data(200, contentType, []byte(body))
+	}
+
 }

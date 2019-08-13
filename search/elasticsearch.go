@@ -13,14 +13,14 @@ var EngineClient EngineConfig
 
 //EngineConfig client, name/alias of elsticsearch index in our cluster
 type EngineConfig struct {
-	Client            *elasticsearch.Client
-	AdsIndexName      string
-	CategoryIndexName string
-	RegionIndexName   string
+	Client          *elasticsearch.Client
+	MainIndexName   string
+	SecondIndexName string
+	ThirdIndexName  string
 }
 
 // OpenElasticSearchConnection create new ES client
-func OpenElasticSearchConnection(esAddr, ads, cat, region string) *EngineConfig {
+func OpenElasticSearchConnection(esAddr, mainIndex, secondIndex, thirdIndex string) *EngineConfig {
 	var r map[string]interface{}
 	cfg := elasticsearch.Config{
 		Addresses: []string{
@@ -49,9 +49,9 @@ func OpenElasticSearchConnection(esAddr, ads, cat, region string) *EngineConfig 
 	log.Println(strings.Repeat("~", 37))
 
 	EngineClient.Client = es
-	EngineClient.AdsIndexName = ads
-	EngineClient.CategoryIndexName = cat
-	EngineClient.RegionIndexName = region
+	EngineClient.MainIndexName = mainIndex
+	EngineClient.SecondIndexName = secondIndex
+	EngineClient.ThirdIndexName = thirdIndex
 
 	return &EngineClient
 }
