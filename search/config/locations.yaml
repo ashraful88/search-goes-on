@@ -1,9 +1,0 @@
-region.kuala-lumpur.label: "Kuala Lumpur"
-region.kuala-lumpur.id: 9
-region.9.key: "kuala-lumpur"
-region.9.label: "Kuala Lumpur"
-
-region:
-  kuala-lumpur:
-    id: 9
-    label: "Kuala Lumpur"
