@@ -1,4 +1,4 @@
-module github.com/ashraful88/search-goes
+module github.com/ashraful88/search-goes-on
 
 go 1.12
 
