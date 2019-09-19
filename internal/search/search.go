@@ -4,45 +4,13 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"strings"
 
-	"github.com/tidwall/sjson"
 	"github.com/ashraful88/search-goes-on/internal/platform/searchengine"
+	"github.com/tidwall/sjson"
 )
-
-// add must filters in es query
-func (eq *ElasticQuery) buildMustFilter(params map[string][]string) {
-	// todo: loop and yaml conf. but this one is faster as no loop, will try array switch
-
-}
-
-// add should filter if any
-func (eq *ElasticQuery) buildShouldFilter(params map[string][]string) {
-	// todo: loop and yaml conf
-}
-
-func (eq *ElasticQuery) buildLimits(params map[string][]string) {
-	// defaults
-	eq.Size = "40"
-	eq.From = "0"
-	eq.Sort = `{ "date" : "desc"}`
-
-	// override defaults if provided
-	if params["limit"] != nil {
-		eq.Size = params["limit"][0]
-	}
-	if params["from"] != nil {
-		eq.From = params["from"][0]
-	}
-	if params["sort"] != nil {
-		if params["order"] != nil {
-			eq.Sort = fmt.Sprintf(` { "%s" : "%s" }`, params["sort"], params["order"])
-		}
-	}
-}
 
 // QuerySearch perform a query search in ES
 func QuerySearch(q string, params map[string][]string) (string, error) {

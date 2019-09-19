@@ -1,8 +1,9 @@
-params.1015.equip: 3
-params.1015.equip: 3
-params.1015.equip: 3
-params.1015.equip: 3
-params.1015.equip: 3
-params.1015.equip: 3
-params.1015.equip: 3
-params.1015.equip: 3
+category.filter.multi: true
+category.filter.label: Category
+category.filter.key: category
+category.filter.type: must
+
+price.filter.label: Price
+price.filter.key: price
+price.filter.type: range
+

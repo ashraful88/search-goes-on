@@ -20,6 +20,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 	search.FilterFilePath = "./search/config"
+	search.LoadConfigFromFile()
 	srvPort, hasPort := os.LookupEnv("SERVICE_PORT")
 	if hasPort == false {
 		log.Fatal("Service port missing")
