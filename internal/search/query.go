@@ -20,6 +20,7 @@ type ElasticQuery struct {
 	Sort  string `json:"sort"`
 	Order string `json:"order"`
 }
+
 // QueryBuilder elasticsearch query builder by url query params
 type QueryBuilder struct {
 	SearchQuery ElasticQuery `json:"SearchQuery"`
@@ -37,6 +38,7 @@ func (qb *QueryBuilder) addMustFilterByTerm(paramKey, termKey string) {
 		qb.SearchQuery.Query.BoolQuery.Filter.BoolFilter.MustFilter = append(qb.SearchQuery.Query.BoolQuery.Filter.BoolFilter.MustFilter, mustFilter)
 	}
 }
+
 // add must filters in es query
 func (qb *QueryBuilder) buildFilters() {
 	// todo: loop and yaml conf. but this one is faster as no loop, will try array switch
@@ -45,12 +47,11 @@ func (qb *QueryBuilder) buildFilters() {
 		m2 := val.(map[string]interface{})
 		pk := m2["filter"].(map[string]interface{})
 		pkey := fmt.Sprintf("%v", pk["key"])
-		log.Println(key, pkey)
+		//log.Println(key, pkey)
 		//log.Println(key, m2["filter"])
 		qb.addMustFilterByTerm(key, pkey)
 	}
 }
-
 
 func (eq *ElasticQuery) buildLimits(params map[string][]string) {
 	// defaults

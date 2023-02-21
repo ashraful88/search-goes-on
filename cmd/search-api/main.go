@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 
-	gpmiddleware "github.com/701search/gin-prometheus-middleware"
 	"github.com/ashraful88/search-goes-on/cmd/search-api/internal/api"
 	"github.com/ashraful88/search-goes-on/internal/search"
 	"github.com/ashraful88/search-goes-on/internal/platform/searchengine"
@@ -43,10 +42,6 @@ func main() {
 
 	// Recovery middleware recovers from any panics and writes a 500 if there was one.
 	router.Use(gin.Recovery())
-
-	// Prometheus metric setup
-	p := gpmiddleware.NewPrometheus("")
-	p.Use(router)
 
 	router.Use(func(context *gin.Context) {
 		context.Writer.Header().Add("Access-Control-Allow-Origin", "*")
