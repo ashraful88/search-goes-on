@@ -16,8 +16,8 @@ import (
 func QuerySearch(q string, params map[string][]string) (string, error) {
 	var eq ElasticQuery
 
-	eq.buildMustFilter(params)
-	eq.buildShouldFilter(params)
+	//eq.buildMustFilter(params)
+	//eq.buildShouldFilter(params)
 	eq.buildLimits(params)
 	sq, _ := sjson.Set("", "query", eq.Query)
 
