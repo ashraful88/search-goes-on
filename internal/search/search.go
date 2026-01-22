@@ -9,37 +9,40 @@ import (
 	"strings"
 
 	"github.com/ashraful88/search-goes-on/internal/platform/searchengine"
-	"github.com/tidwall/sjson"
 )
 
 // QuerySearch perform a query search in ES
 func QuerySearch(q string, params map[string][]string) (string, error) {
-	var eq ElasticQuery
+	// Build the Elasticsearch query using the QueryBuilder
+	qb := NewQueryBuilder(q, params)
+	queryJSON, err := qb.ToJSON()
+	if err != nil {
+		log.Printf("Error building query: %s", err)
+		return "", errors.New("error building search query")
+	}
 
-	//eq.buildMustFilter(params)
-	//eq.buildShouldFilter(params)
-	eq.buildLimits(params)
-	sq, _ := sjson.Set("", "query", eq.Query)
+	log.Printf("Elasticsearch Query: %s", queryJSON)
 
 	se := searchengine.GetSearchClient()
-	// Perform the search request.
+	// Perform the search request
 	res, err := se.Client.Search(
 		se.Client.Search.WithContext(context.Background()),
 		se.Client.Search.WithIndex(se.MainIndexName),
-		se.Client.Search.WithBody(strings.NewReader(sq)),
+		se.Client.Search.WithBody(strings.NewReader(queryJSON)),
 		se.Client.Search.WithTrackTotalHits(true),
 		se.Client.Search.WithPretty(),
 	)
-	if res.IsError() {
-		log.Println("status error from es")
-		return "", errors.New("status error from es")
-	}
 
 	if err != nil {
-		log.Fatalf("Error getting response: %s", err)
-		return "", errors.New("error getting es result")
+		log.Printf("Error executing search: %s", err)
+		return "", errors.New("error executing search")
 	}
 	defer res.Body.Close()
+
+	if res.IsError() {
+		log.Printf("Elasticsearch error response: %s", res.Status())
+		return "", errors.New("elasticsearch returned error status")
+	}
 
 	return read(res.Body), nil
 }

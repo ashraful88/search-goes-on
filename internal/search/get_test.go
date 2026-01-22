@@ -4,12 +4,7 @@ import (
 	"testing"
 )
 
-func TestgetDocByID(t *testing.T) {
-	//qry := queryForDocByID()
-	//log.Println("getDocByID", qry)
-
-	/* assert.Equal(t, 201, statusRes)
-	if assert.NotNil(t, bodyRes) {
-		require.NoError(t, errors.New("Query "))
-	} */
+func TestGetDocByID(t *testing.T) {
+	// TODO: Implement this test once the function is complete
+	t.Skip("Not implemented yet")
 }

@@ -1,9 +1,95 @@
-category.filter.multi: true
-category.filter.label: Category
-category.filter.key: category
-category.filter.type: must
+# Search field configuration
+search:
+  fields:
+    - name
+    - description
+    - brand
+    - category
+  default_operator: OR
+  minimum_should_match: 1
 
-price.filter.label: Price
-price.filter.key: price
-price.filter.type: range
+# Filter configuration for faceted search
+filters:
+  category:
+    label: Category
+    field: category.keyword
+    type: terms
+    multi: true
 
+  brand:
+    label: Brand
+    field: brand.keyword
+    type: terms
+    multi: true
+
+  price:
+    label: Price
+    field: price
+    type: range
+    ranges:
+      - key: "0-50"
+        from: 0
+        to: 50
+      - key: "50-100"
+        from: 50
+        to: 100
+      - key: "100-200"
+        from: 100
+        to: 200
+      - key: "200-*"
+        from: 200
+
+  in_stock:
+    label: In Stock
+    field: in_stock
+    type: term
+    multi: false
+
+  rating:
+    label: Rating
+    field: rating
+    type: range
+    ranges:
+      - key: "4+"
+        from: 4
+      - key: "3+"
+        from: 3
+      - key: "2+"
+        from: 2
+
+# Aggregations for faceted search results
+aggregations:
+  category:
+    type: terms
+    field: category.keyword
+    size: 50
+
+  brand:
+    type: terms
+    field: brand.keyword
+    size: 50
+
+  price_ranges:
+    type: range
+    field: price
+    ranges:
+      - key: "0-50"
+        from: 0
+        to: 50
+      - key: "50-100"
+        from: 50
+        to: 100
+      - key: "100-200"
+        from: 100
+        to: 200
+      - key: "200-*"
+        from: 200
+
+  avg_rating:
+    type: avg
+    field: rating
+
+  in_stock_count:
+    type: terms
+    field: in_stock
+    size: 2
